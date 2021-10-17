@@ -72,9 +72,19 @@ async def _invite(ctx, invite: str):
 
 
 @bot.command(hidden=True)
-async def test(ctx, role:discord.Role):
+async def test(ctx, role: discord.Role):
     if ctx.author.id != 437491079869104138:
         return
     await ctx.author.remove_roles(role, reason="It was just a test for heirarchy.")
+
+
+@bot.command(name="Quit", brief="Quits Bot", help=f"Logs out the Bot. **(Owner)**\n\tUsage : **!2 quit**", hidden=True)
+async def _quit(ctx):
+    if ctx.author.id == 437491079869104138:
+        await ctx.send(f"Disconnecting sequence invoked by {ctx.author.display_name}...")
+        await bot.logout()
+    else:
+        print(f"{ctx.author} tried to log out the bot.")
+
 
 bot.run(os.getenv('TOKEN'))
