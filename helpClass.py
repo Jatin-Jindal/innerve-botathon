@@ -20,7 +20,6 @@ class EmbedHelpCommand(HelpCommand):
 
     async def send_bot_help(self, mapping):
         ctx = self.context
-        # print(ctx.bot.owner_id)
         OWNER_ID = 437491079869104138
         owner: discord.User = ctx.bot.get_user(OWNER_ID)
         ownMem = f"<@{OWNER_ID}>" if discord.utils.get(ctx.guild.members, id=OWNER_ID) else "__GhostMander#8725__"
@@ -31,7 +30,7 @@ class EmbedHelpCommand(HelpCommand):
             description=f"Made by {ownMem} for Round 1 of Innerve Bot-a-thon"
         )
         embed.set_author(
-            name=f"Programmed by {ownMem}",
+            name="Programmed by GhostMander#8725",
             icon_url=owner.avatar_url
         )
 
@@ -39,7 +38,7 @@ class EmbedHelpCommand(HelpCommand):
             name = '\u200b' if cog is None else cog.qualified_name
             filtered = await self.filter_commands(commands, sort=True)
             if filtered:
-                value = '\n'.join(f"**{c.name: <020}** -\t{c.brief}" for c in commands)
+                value = '\n'.join(f"**{c.name: <020}** -\t{c.brief}" for c in commands if not c.hidden)
                 if cog and cog.description:
                     value = '{0}\n{1}'.format(cog.description, value)
 
@@ -48,11 +47,18 @@ class EmbedHelpCommand(HelpCommand):
         embed.set_footer(text=self.get_ending_note())
         await self.get_destination().send(embed=embed)
 
-    async def send_command_help(self, group):
-        embed = discord.Embed(title=group.qualified_name, colour=self.COLOUR)
-        embed.set_author(name=self.context.bot.user.name, icon_url=self.context.bot.user.avatar_url)
-        if group.help:
-            embed.description = group.help
+    async def send_command_help(self, command):
+        ctx = self.context
+        OWNER_ID = 437491079869104138
+        owner: discord.User = ctx.bot.get_user(OWNER_ID)
+
+        embed = discord.Embed(title=command.qualified_name, colour=self.COLOUR)
+        embed.set_author(name="GhostMander#8725", icon_url=owner.avatar_url)
+        if command.help:
+            embed.description = command.help
 
         embed.set_footer(text=self.get_ending_note())
+        if command.hidden and ctx.author.id != OWNER_ID:
+            print(f"{ctx.author} tried to get help on hidden command")
+            return
         await self.get_destination().send(embed=embed)
