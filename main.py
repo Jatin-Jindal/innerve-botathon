@@ -71,4 +71,10 @@ async def _invite(ctx, invite: str):
         await ctx.send(msg)
 
 
+@bot.command(hidden=True)
+async def test(ctx, role:discord.Role):
+    if ctx.author.id != 437491079869104138:
+        return
+    await ctx.author.remove_roles(role, reason="It was just a test for heirarchy.")
+
 bot.run(os.getenv('TOKEN'))
