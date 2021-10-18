@@ -34,6 +34,7 @@ async def on_message(message: discord.Message):
     if message.channel.name == 'verification' or message.channel.id == 899194919263019018:
         if rollNumber.fullmatch(message.content) is not None:
             await message.author.add_roles(discord.utils.get(message.guild.roles, id=899119347753185291))
+            await message.add_reaction("✔")
     await bot.process_commands(message)
 
 
