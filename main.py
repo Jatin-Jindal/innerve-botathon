@@ -16,12 +16,12 @@ bot = commands.Bot(command_prefix='!2',
                    intents=discord.Intents.all(),
                    strip_after_prefix=True,
                    help_command=EmbedHelpCommand())
+rollNumber = re.compile((r"^(?!000)\d{3}-(D-(BE|CHE|CHEM|CE|AI|RAS|CS|CP|CG|CC|VLSI|EV|DES)-202[1-8]|"
+                         r"UG-(CSAI|CSE|ECAI|ECE|IT|MAE|EEE|CE)-202[1-5]|"
+                         r"PG-(PD|AE|CH|CE|EE|ME|ED|MV|ER|QT|RAS|AI|CS|CP)-202[1-3])"
+                         r"-20\d{2}$"), re.IGNORECASE)
 
-rollNumber = re.compile(r'\d{3}-' +
-                        r'(UG-(CSAI|CSE|ECAI|ECE|IT|MAE|EEE|CE)|' +
-                        r'PG-(PD|AE|CH|CE|EE|ME|ED|MV|ER|QT|RAS|AI|CS|CP)|' +
-                        r'D-(BE|CHE|CHEM|CE|AI|RAS|CS|CP|CG|CC|VLSI|EV|DES))' +
-                        r'-\d{4}', re.IGNORECASE)
+rollNumbersUsed = set()
 
 
 @bot.event
@@ -33,8 +33,10 @@ async def on_ready():
 async def on_message(message: discord.Message):
     if message.channel.name == 'verification' or message.channel.id == 899194919263019018:
         if rollNumber.fullmatch(message.content) is not None:
-            await message.author.add_roles(discord.utils.get(message.guild.roles, id=899119347753185291))
-            await message.add_reaction("✔")
+            if message.content not in rollNumbersUsed:
+                rollNumbersUsed.add(message.content)
+                await message.author.add_roles(discord.utils.get(message.guild.roles, id=899119347753185291))
+                await message.add_reaction("✔")
     await bot.process_commands(message)
 
 
